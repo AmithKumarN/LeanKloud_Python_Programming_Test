@@ -13,7 +13,9 @@ ns = api.namespace('todos', description='TODO operations')
 
 todo = api.model('Todo', {
     'id': fields.Integer(readonly=True, description='The task unique identifier'),
-    'task': fields.String(required=True, description='The task details')
+    'task': fields.String(required=True, description='The task details'),
+    'due_by': fields.Date(required=True, description='The due date for the task'),
+    'status': fields.String(required=True, description='The current status of the task \(Not started, In progress and Finished\)')
 })
 
 
