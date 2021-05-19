@@ -43,12 +43,8 @@ if __name__ == '__main__':
     for subject in subjects:
         n = len(toppers[subject])
         if n == 1:
-            print('Topper in', subject, 'is ', end="")
+            print('Topper in', subject, 'is ', end='')
         else:
-            print('Toppers in', subject, 'are ', end="")
-        for i in range(n):
-            if i==n-1:
-                print(toppers[subject][i], end=".\n")
-            else:
-                print(toppers[subject][i], end=", ")
+            print('Toppers in', subject, 'are ', end='')
+        print(*toppers[subject], sep=', ',  end='.\n')
     print('Best students in the class are {}, {} and {}.'.format(best1, best2, best3))
