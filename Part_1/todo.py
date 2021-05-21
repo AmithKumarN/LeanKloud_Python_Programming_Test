@@ -2,8 +2,7 @@ import pymysql
 from flask import Flask, request
 from datetime import date
 from flask_restplus import Api, Resource, fields
-# from werkzeug.contrib.fixers import ProxyFix
-from werkzeug.middleware.proxy_fix import ProxyFix
+from werkzeug.contrib.fixers import ProxyFix
 from werkzeug.utils import cached_property
 from flaskext.mysql import MySQL
 from functools import wraps
