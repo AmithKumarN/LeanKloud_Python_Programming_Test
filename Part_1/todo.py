@@ -2,7 +2,8 @@ import pymysql
 from flask import Flask, request
 from datetime import date
 from flask_restplus import Api, Resource, fields
-from werkzeug.contrib.fixers import ProxyFix
+# from werkzeug.contrib.fixers import ProxyFix
+from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.utils import cached_property
 from flaskext.mysql import MySQL
 from functools import wraps
@@ -185,9 +186,9 @@ class TodoDAO(object):
 
 
 DAO = TodoDAO()
-DAO.create({'task': 'Build an API', 'due_by': '2021-05-21', 'status': 'In progress'})
-DAO.create({'task': 'marklist', 'due_by': '2021-05-20', 'status': 'Finished'})
-DAO.create({'task': 'Authorization', 'due_by': '2021-05-23', 'status': 'Not started'})
+# DAO.create({'task': 'Build an API', 'due_by': '2021-05-21', 'status': 'In progress'})
+# DAO.create({'task': 'marklist', 'due_by': '2021-05-20', 'status': 'Finished'})
+# DAO.create({'task': 'Authorization', 'due_by': '2021-05-23', 'status': 'Not started'})
 
 
 @ns.route('/')
