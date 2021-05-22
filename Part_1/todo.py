@@ -88,6 +88,7 @@ todo = api.model('Todo', {
 
 
 class TodoDAO(object):
+    select = "select id, task, date_format(due_by, '%Y-%m-%d') as due_by, status from tasks"
     def __init__(self):
         try:
             self.conn = mysql.connect()
@@ -101,16 +102,16 @@ class TodoDAO(object):
         
     def getall(self):
         try:
-            sts = self.cursor.execute("select * from tasks")
+            sts = self.cursor.execute(self.select)
             if sts > 0:
                 return self.cursor.fetchall()
-            return {'message': 'No Todos found'}, 204
+            return {'message': 'No Todos found'}, 404
         except Exception as e:
             print("Exception: ", e)
 
     def get(self, id):
         try:
-            sts = self.cursor.execute("select * from tasks where id=%s",(id))
+            sts = self.cursor.execute(self.select+" where id=%s",(id))
             if sts > 0:
                 return self.cursor.fetchone()
             return {'message': 'Todo {} not found'.format(id)}, 404
@@ -121,7 +122,7 @@ class TodoDAO(object):
         try:
             self.cursor.execute("insert into tasks values(0, %s, %s, %s)",(data['task'], data['due_by'], data['status']))
             self.conn.commit()
-            self.cursor.execute("select * from tasks where id=(select last_insert_id() as id)")
+            self.cursor.execute(self.select+" where id=(select last_insert_id() as id)")
             return self.cursor.fetchone(), 201
         except Exception as e:
             print("Exception: ", e)
@@ -158,28 +159,28 @@ class TodoDAO(object):
     
     def getDue(self, due_by):
         try:
-            sts = self.cursor.execute("select * from tasks where due_by=%s", (due_by))
+            sts = self.cursor.execute(self.select+" where due_by=%s", (due_by))
             if sts > 0:
                 return self.cursor.fetchall()
-            return {'message': 'No todos due on {}'.format(due_by)}, 204
+            return {'message': 'No todos due on {}'.format(due_by)}, 404
         except Exception as e:
             print("Exception: ", e)
     
     def getOverdue(self):
         try:
-            sts = self.cursor.execute("select * from tasks where due_by<%s", (date.today()))
+            sts = self.cursor.execute(self.select+" where due_by<%s", (date.today()))
             if sts > 0:
                 return self.cursor.fetchall()
-            return {'message': 'No Todos overdue as of today'}, 204
+            return {'message': 'No Todos overdue as of today'}, 404
         except Exception as e:
             print("Exception: ", e)
     
     def getFinished(self):
         try:
-            sts = self.cursor.execute("select * from tasks where status like 'Finished'")
+            sts = self.cursor.execute(self.select+" where status like 'Finished'")
             if sts > 0:
                 return self.cursor.fetchall()
-            return {'message': 'No finished todos found'}, 204
+            return {'message': 'No finished todos found'}, 404
         except Exception as e:
             print("Exception: ", e)
 
@@ -192,9 +193,9 @@ DAO = TodoDAO()
 
 @ns.route('/')
 @ns.response(201, 'Task created successfully')
-@ns.response(204, 'Empty Todo list')
 @ns.response(400, 'User ID is missing!')
 @ns.response(401, 'Access Denied!')
+@ns.response(404, 'Empty Todo list')
 class TodoList(Resource):
     '''Shows a list of all todos, and lets you POST to add new tasks'''
     @api.doc(security='apikey')
@@ -233,7 +234,7 @@ class Todo(Resource):
     @api.doc(security='apikey')
     @write_access
     @ns.doc('delete_todo')
-    @ns.response(204, 'Todo deleted')
+    @ns.response(404, 'Todo deleted')
     def delete(self, id):
         '''Delete a task given its identifier'''
         return DAO.delete(id)
@@ -266,10 +267,9 @@ class UpdateStatus(Resource):
     
 
 @ns.route('/due/due_date=<string:due_by>')
-@ns.response(204, 'No tasks due')
 @ns.response(400, 'User ID is missing!')
 @ns.response(401, 'Access Denied!')
-@ns.response(404, 'Todo not found')
+@ns.response(404, 'No tasks due')
 @ns.param('due_by', 'Due Date')
 class TasksDue(Resource):
     '''Show the tasks which are due on the given date'''
@@ -283,10 +283,9 @@ class TasksDue(Resource):
     
     
 @ns.route('/overdue')
-@ns.response(204, 'No tasks overdue')
 @ns.response(400, 'User ID is missing!')
 @ns.response(401, 'Access Denied!')
-@ns.response(404, 'Todo not found')
+@ns.response(404, 'No tasks overdue')
 class TasksOverdue(Resource):
     '''Shows all the overdue tasks until today'''
     @api.doc(security='apikey')
@@ -299,10 +298,9 @@ class TasksOverdue(Resource):
     
 
 @ns.route('/finished')
-@ns.response(204, 'No tasks finished')
 @ns.response(400, 'User ID is missing!')
 @ns.response(401, 'Access Denied!')
-@ns.response(404, 'Todo not found')
+@ns.response(404, 'No tasks finished')
 class TasksFinished(Resource):
     '''Shows all the compeleted tasks'''
     @api.doc(security='apikey')
