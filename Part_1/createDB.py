@@ -4,6 +4,7 @@ myDB = mysql.connector.connect(host='localhost', user='root', passwd="amith")
 myCursor = myDB.cursor()
 
 def create():
+    '''creates the database and the tasks and users tables'''
     try: myCursor.execute('drop database todo')
     except: pass
     myCursor.execute('create database todo')
@@ -32,6 +33,7 @@ def create():
     myCursor.execute(createStmt)
     
 def populate():
+    '''populates the creates tables with values'''
     myCursor.execute("insert into tasks values(0, 'LeanKloud', '2021-05-19', 'Finished')")
     myCursor.execute("insert into tasks values(0, 'Disk management project', '2021-05-28', 'In progress')")
     myCursor.execute("insert into tasks values(0, 'Flappy bird AI', '2021-05-30', 'Not started');")

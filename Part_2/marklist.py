@@ -1,6 +1,7 @@
 from pandas import read_csv
 
 def findSubjectToppers(subjects, mark_list, total_list):
+    '''Returns a dictionary with a list of subjectwise toppers'''
     max_marks = {subject: 0 for subject in subjects}
     toppers = {subject: [] for subject in subjects}
     for subject in subjects:
@@ -15,6 +16,7 @@ def findSubjectToppers(subjects, mark_list, total_list):
     return toppers
 
 def findBestStudents(mark_list, total_list):
+    '''Finds the best 3 students in total marks among the class'''
     m1, m2, m3 = 0, 0, 0
     best1, best2, best3 = '', '', ''
     for ind, total in enumerate(total_list):
@@ -31,9 +33,9 @@ def findBestStudents(mark_list, total_list):
 
 if __name__ == '__main__':
     mark_list = read_csv('Student_marks_list.csv')
-    n = len(mark_list) # Total number of rows
-    subjects = mark_list.keys()[1:] # Subject names
-    names = mark_list.index # Student names
+    n = len(mark_list)                  # Total number of rows
+    subjects = mark_list.keys()[1:]     # Subject names
+    names = mark_list.index             # Student names
 
     total_list = [0 for _ in range(n)]
 
