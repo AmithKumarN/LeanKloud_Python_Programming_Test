@@ -1,3 +1,4 @@
+import sys
 from pandas import read_csv
 
 def findSubjectToppers(subjects, mark_list, total_list):
@@ -32,7 +33,11 @@ def findBestStudents(mark_list, total_list):
     return best1, best2, best3
 
 if __name__ == '__main__':
-    mark_list = read_csv('Student_marks_list.csv')
+    if(len(sys.argv)) == 1:
+        print('Error: Input file name required!')
+        sys.exit(1)
+    filename = sys.argv[1]
+    mark_list = read_csv(filename)
     n = len(mark_list)                  # Total number of rows
     subjects = mark_list.keys()[1:]     # Subject names
     names = mark_list.index             # Student names
