@@ -1,1 +1,3 @@
-# LeanKloud_Python_Programming_Test
+# LeanKloud Python Programming Test
+
+## Part 1: REST API for Todo app using Flask-RESTPlus
