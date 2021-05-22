@@ -111,7 +111,7 @@ class TodoDAO(object):
 
     def get(self, id):
         try:
-            sts = self.cursor.execute(self.select+" where id=%s",(id))
+            sts = self.cursor.execute(self.select+" where id={}".format(id))
             if sts > 0:
                 return self.cursor.fetchone()
             return {'message': 'Todo {} not found'.format(id)}, 404
@@ -120,7 +120,7 @@ class TodoDAO(object):
 
     def create(self, data):
         try:
-            self.cursor.execute("insert into tasks values(0, %s, %s, %s)",(data['task'], data['due_by'], data['status']))
+            self.cursor.execute("insert into tasks values(0, %s, %s, %s)", (data['task'], data['due_by'], data['status']))
             self.conn.commit()
             self.cursor.execute(self.select+" where id=(select last_insert_id() as id)")
             return self.cursor.fetchone(), 201
@@ -129,7 +129,7 @@ class TodoDAO(object):
 
     def update(self, id, data):
         try:
-            sts = self.cursor.execute("update tasks set task=%s, due_by=%s, status=%s where id=%s", (data['task'], data['due_date'], data['status'], id))
+            sts = self.cursor.execute("update tasks set task=%s, due_by=%s, status=%s where id=%s", (data['task'], data['due_by'], data['status'], id))
             self.conn.commit()
             if sts == 0:
                 return {'message': 'Todo {} not found'.format(id)}, 404
@@ -159,7 +159,8 @@ class TodoDAO(object):
     
     def getDue(self, due_by):
         try:
-            sts = self.cursor.execute(self.select+" where due_by=%s", (due_by))
+            print(due_by)
+            sts = self.cursor.execute(self.select+" where due_by='{}'".format(due_by))
             if sts > 0:
                 return self.cursor.fetchall()
             return {'message': 'No todos due on {}'.format(due_by)}, 404
@@ -168,7 +169,7 @@ class TodoDAO(object):
     
     def getOverdue(self):
         try:
-            sts = self.cursor.execute(self.select+" where due_by<%s", (date.today()))
+            sts = self.cursor.execute(self.select+" where due_by<'{}'".format(date.today()))
             if sts > 0:
                 return self.cursor.fetchall()
             return {'message': 'No Todos overdue as of today'}, 404
@@ -279,7 +280,7 @@ class TasksDue(Resource):
     # @ns.marshal_list_with(todo)
     def get(self, due_by):
         '''Fetch the tasks due on the given date'''
-        return DAO.getDue()
+        return DAO.getDue(due_by)
     
     
 @ns.route('/overdue')
